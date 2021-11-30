@@ -26,7 +26,7 @@ let collectionArrays = []
 
 async function takeScreenshot() {
   try {
-    const browser = await puppeteer.launch()
+    const browser = await puppeteer.launch({ignoreDefaultArgs: ['--disable-extensions']});
     const page = await browser.newPage()
 
     await page.goto(url)
@@ -187,6 +187,7 @@ async function getCollectionInfos(url)
   const page = await browser.newPage()
   await page.goto(url)
   const data = await page.evaluate(() => document.querySelector('*').outerHTML)
+  await browser.close()
 
   var result = data.substring(data.indexOf(startTableTag), data.lastIndexOf(startTableTag))
   var indices = getIndicesOf(startTableTag, result)
@@ -202,7 +203,6 @@ async function getCollectionInfos(url)
     collectionArrays.push(obj)
   }
   console.log("result", collectionArrays)
-  await browser.close()
 }
 
 app.post('/collections', async (req, res) => {
